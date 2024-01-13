@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27020:27017
+    expose:
+      - '27020'
+    networks:
+      - e_com_edumaster
+    volumes:
+      - mongo_data:/data/db   
+
+  e_com_service:
+    image: irvantaufik28/edumaster_ecommerce:latest
+    depends_on:
+      - mongo
+    environment:
+      DB_URI: mongodb://mongo:27017/e-come
+      PORT: 3030
+      HOST: 0.0.0.0
+    ports:
+      - '3030:3030'
+    expose:
+      - '3030'
+    networks:
+      - e_com_edumaster
+
+networks:
+  e_com_edumaster:
+    driver: bridge
+
+volumes:
+  mongo_data:   
