@@ -13,7 +13,7 @@ export class Product {
   name: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Category' })
-  category: CategoryDocument[];
+  category: CategoryDocument;
 
   @Prop({ default: null })
   description: string;
@@ -28,7 +28,7 @@ export class Product {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ProductImage' }],
     default: [],
   })
-  productImages: ProductImageDocument[];
+  product_images: ProductImageDocument[];
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
