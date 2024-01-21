@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ProductModule } from './product/product.module';
 import { ConfigModule } from '@nestjs/config';
 import { CategoryModule } from './category/category.module';
+import { ProductImageModule } from './product-image/product-image.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CategoryModule } from './category/category.module';
     MongooseModule.forRoot(process.env.DB_URI),
     ProductModule,
     CategoryModule,
+    ProductImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
