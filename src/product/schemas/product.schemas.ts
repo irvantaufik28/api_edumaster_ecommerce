@@ -9,6 +9,8 @@ export type ProductDocument = Product & Document;
   timestamps: true,
 })
 export class Product {
+  _id: string;
+
   @Prop()
   name: string;
 

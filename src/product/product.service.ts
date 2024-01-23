@@ -71,7 +71,7 @@ export class ProductService {
   async getById(id: string): Promise<ProductResponse> {
     const product = await this.productModel
       .findById(id)
-      .populate('productImages')
+      .populate('product_images')
       .populate('category');
 
     if (!product) {

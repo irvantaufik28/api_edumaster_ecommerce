@@ -9,7 +9,8 @@ import { ProductImageModule } from './product-image/product-image.module';
 import { CartModule } from './cart/cart.module';
 import { OrderModule } from './order/order.module';
 import { PaymentModule } from './payment/payment.module';
-import { CartDetailModule } from './cart-detail/cart-detail.module';
+import { APP_FILTER } from '@nestjs/core';
+import { GlobalExceptionFilter } from './utils/error/global-exception.filter';
 
 @Module({
   imports: [
@@ -24,9 +25,14 @@ import { CartDetailModule } from './cart-detail/cart-detail.module';
     CartModule,
     OrderModule,
     PaymentModule,
-    CartDetailModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: GlobalExceptionFilter,
+    // },
+    AppService,
+  ],
 })
 export class AppModule {}
