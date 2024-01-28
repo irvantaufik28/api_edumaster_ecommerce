@@ -13,7 +13,10 @@ import {
   CartDetail,
   CartDetailDocument,
 } from 'src/cart/schemas/car-detail.schemas';
-import { OrderResponse } from './interface/order.interface';
+import {
+  OrderPaginationResult,
+  OrderResponse,
+} from './interface/order.interface';
 @Injectable()
 export class OrderService {
   constructor(
@@ -27,6 +30,51 @@ export class OrderService {
     private cartDetailModel: Model<CartDetailDocument>,
     @InjectConnection() private readonly connection: Connection,
   ) {}
+
+  async findAll(query: Query): Promise<OrderPaginationResult> {
+    const page = Number(query.page) || 1;
+    const size = Number(query.size) || 10;
+    const skip = size * (page - 1);
+
+    const keyword = query.keyword
+      ? {
+          name: {
+            $regex: new RegExp(String(query.keyword), 'i'),
+          },
+        }
+      : {};
+
+    const categoryFilter = query.category
+      ? {
+          'category.name': {
+            $regex: new RegExp(String(query.category), 'i'),
+          },
+        }
+      : {};
+
+    const totalItems = await this.orderModel.find({
+      ...keyword,
+      ...categoryFilter,
+    });
+
+    const orders = await this.orderModel
+      .find({ ...keyword, ...categoryFilter })
+      .limit(size)
+      .skip(skip)
+      .populate('order_products')
+      .exec();
+
+    const result = {
+      data: orders,
+      paging: {
+        page: page,
+        total_item: totalItems.length,
+        total_page: Math.ceil(totalItems.length / size),
+      },
+    };
+
+    return result;
+  }
 
   async create(query: Query): Promise<OrderResponse> {
     const user: any = query.user;

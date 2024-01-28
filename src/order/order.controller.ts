@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { Query as ExpressQuery } from 'express-serve-static-core';
+import { OrderPaginationResult } from './interface/order.interface';
 
 @Controller('order')
 export class OrderController {
@@ -14,5 +15,12 @@ export class OrderController {
   @Get('/:id')
   async getCategoryById(@Param('id') id: string): Promise<any> {
     return await this.orderService.findById(id);
+  }
+
+  @Get()
+  async getAllOrder(
+    @Query() query: ExpressQuery,
+  ): Promise<OrderPaginationResult> {
+    return this.orderService.findAll(query);
   }
 }
