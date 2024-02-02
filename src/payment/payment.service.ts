@@ -2,7 +2,11 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 import { OrderProduct } from 'src/order/schemas/order-product.schemas';
-import { Order, OrderDocument } from 'src/order/schemas/order.schemas';
+import {
+  Order,
+  OrderDocument,
+  OrderStatus,
+} from 'src/order/schemas/order.schemas';
 import {
   Payment,
   PaymentDocument,
@@ -144,6 +148,12 @@ export class PaymentService {
             },
             { session },
           );
+
+          await this.orderModel.updateOne(
+            { code: data.order_id },
+            { status: OrderStatus.PAID },
+            { session },
+          );
           responseData = transaction;
         } else if (transactionStatus == 'settlement') {
           const transaction = await this.paymentModel.updateOne(
@@ -153,6 +163,11 @@ export class PaymentService {
               payment_method: data.payment_method,
               payment_type: data.payment.type,
             },
+            { session },
+          );
+          await this.orderModel.updateOne(
+            { code: data.order_id },
+            { status: OrderStatus.PAID },
             { session },
           );
           responseData = transaction;
@@ -166,11 +181,21 @@ export class PaymentService {
             { status: PaymentStatus.CANCELED },
             { session },
           );
+          await this.orderModel.updateOne(
+            { code: data.order_id },
+            { status: OrderStatus.CANCELED },
+            { session },
+          );
           responseData = transaction;
         } else if (transactionStatus == 'pending') {
           const transaction = await this.paymentModel.updateOne(
             { transaction_id: transaction_id },
             { status: PaymentStatus.PENDING },
+            { session },
+          );
+          await this.orderModel.updateOne(
+            { code: data.order_id },
+            { status: OrderStatus.NOT_PAID },
             { session },
           );
           responseData = transaction;
