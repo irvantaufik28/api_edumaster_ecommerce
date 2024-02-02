@@ -26,6 +26,7 @@ export class ProductService {
     const page = Number(query.page) || 1;
     const size = Number(query.size) || 10;
     const skip = size * (page - 1);
+
     const keyword = query.keyword
       ? {
           name: {
@@ -51,7 +52,7 @@ export class ProductService {
       .find({ ...keyword, ...categoryFilter })
       .limit(size)
       .skip(skip)
-      .populate('productImages')
+      .populate('product_images')
       .populate('category')
       .exec();
 
@@ -70,7 +71,7 @@ export class ProductService {
   async getById(id: string): Promise<ProductResponse> {
     const product = await this.productModel
       .findById(id)
-      .populate('productImages')
+      .populate('product_images')
       .populate('category');
 
     if (!product) {
@@ -87,7 +88,7 @@ export class ProductService {
       description: product.description,
       price: product.price,
       stock: product.stock,
-      productImages: product.productImages,
+      product_images: product.product_images,
     });
 
     const savedProduct = await createdProduct.save();

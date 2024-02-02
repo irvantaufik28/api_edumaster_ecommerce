@@ -36,5 +36,5 @@ export class UpdateProductDto {
     each: true,
     message: 'Each item in the array should be a valid MongoDB ObjectId',
   })
-  productImages?: string[];
+  product_images?: string[];
 }
