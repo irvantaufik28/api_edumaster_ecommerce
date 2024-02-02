@@ -208,7 +208,7 @@ export class PaymentService {
     }
 
     await this.updateStatusBasedOnMidtransResponse(
-      payment.transaction_id,
+      paymentData.transaction_id,
       paymentData,
     );
 
