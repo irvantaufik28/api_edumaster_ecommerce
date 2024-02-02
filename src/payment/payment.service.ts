@@ -119,7 +119,7 @@ export class PaymentService {
     const hash = crypto
       .createHash('sha512')
       .update(
-        `${transaction_id}${data.status_code}${data.gross_amount}${process.env.MIDTRANS_SERVER_KEY}`,
+        `${data.order_id}${data.status_code}${data.gross_amount}${process.env.MIDTRANS_SERVER_KEY}`,
       )
       .digest('hex');
 
