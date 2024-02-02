@@ -7,7 +7,7 @@ export enum OrderStatus {
   NOT_PAID = 'NOT_PAID',
   PAID = 'PAID',
   DONE = 'DONE',
-  CANCELED = 'CANCELDE',
+  CANCELED = 'CANCELED',
 }
 
 export type OrderDocument = Order & Document;
