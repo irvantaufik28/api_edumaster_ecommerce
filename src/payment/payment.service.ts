@@ -10,7 +10,7 @@ import {
 } from './schemas/payment.schema';
 import axios from 'axios';
 import { PaymentResponse } from './interface/payement.interface';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class PaymentService {
