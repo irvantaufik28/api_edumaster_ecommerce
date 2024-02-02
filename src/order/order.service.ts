@@ -17,6 +17,7 @@ import {
   OrderPaginationResult,
   OrderResponse,
 } from './interface/order.interface';
+import { generateRandomCode } from 'src/utils/generate-code';
 @Injectable()
 export class OrderService {
   constructor(
@@ -44,6 +45,14 @@ export class OrderService {
         }
       : {};
 
+    const status = query.status
+      ? {
+          status: {
+            $regex: new RegExp(String(query.status)),
+          },
+        }
+      : {};
+
     const categoryFilter = query.category
       ? {
           'category.name': {
@@ -54,11 +63,12 @@ export class OrderService {
 
     const totalItems = await this.orderModel.find({
       ...keyword,
+      ...status,
       ...categoryFilter,
     });
 
     const orders = await this.orderModel
-      .find({ ...keyword, ...categoryFilter })
+      .find({ ...keyword, ...categoryFilter, ...status })
       .limit(size)
       .skip(skip)
       .populate('order_products')
@@ -112,8 +122,8 @@ export class OrderService {
 
       const pendingOrder = await this.orderModel.findOne({
         status: OrderStatus.PENDING,
+        user_id: user_id,
       });
-
       if (pendingOrder) {
         throw new HttpException(
           'you have a pending order, please complete the order or cancel to place a new order',
@@ -131,6 +141,7 @@ export class OrderService {
       }
       const createOrder = new this.orderModel({
         user_id: user_id,
+        code: generateRandomCode('EC'),
         nis: userData.user_detail.nis,
         first_name: userData.user_detail.first_name,
         middle_name: userData.user_detail.middle_name,

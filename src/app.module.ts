@@ -9,8 +9,8 @@ import { ProductImageModule } from './product-image/product-image.module';
 import { CartModule } from './cart/cart.module';
 import { OrderModule } from './order/order.module';
 import { PaymentModule } from './payment/payment.module';
-import { APP_FILTER } from '@nestjs/core';
-import { GlobalExceptionFilter } from './utils/error/global-exception.filter';
+// import { APP_FILTER } from '@nestjs/core';
+// import { GlobalExceptionFilter } from './utils/error/global-exception.filter';
 
 @Module({
   imports: [
