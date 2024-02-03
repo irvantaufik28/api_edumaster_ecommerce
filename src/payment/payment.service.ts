@@ -145,77 +145,74 @@ export class PaymentService {
       console.log('ini adalah status midtrans', transactionStatus);
       console.log('ini adalah status midtrans', transactionStatus);
       console.log('ini adalah status midtrans', transactionStatus);
-      if (transactionStatus === 'caputre') {
-        if (fraudStatus === 'accept') {
-          const transaction = await this.paymentModel.updateOne(
-            { transaction_id: transaction_id },
-            {
-              status: PaymentStatus.PAID,
-              payment_method: data.payment_method,
-              payment_type: data.payment.type,
-            },
-            { session },
-          );
+      if (fraudStatus === 'accept') {
+        const transaction = await this.paymentModel.updateOne(
+          { transaction_id: transaction_id },
+          {
+            status: PaymentStatus.PAID,
+            payment_method: data.payment_method,
+            payment_type: data.payment.type,
+          },
+          { session },
+        );
 
-          await this.orderModel.updateOne(
-            { code: data.order_id },
-            { status: OrderStatus.PAID },
-            { session },
-          );
-          console.log('level 1');
-          responseData = transaction;
-        } else if (transactionStatus == 'settlement') {
-          const transaction = await this.paymentModel.updateOne(
-            { transaction_id: transaction_id },
-            {
-              status: PaymentStatus.PAID,
-              payment_method: data.payment_method,
-              payment_type: data.payment.type,
-            },
-            { session },
-          );
-          await this.orderModel.updateOne(
-            { code: data.order_id },
-            { status: OrderStatus.PAID },
-            { session },
-          );
-          responseData = transaction;
-          console.log('level 2');
-        } else if (
-          transactionStatus == 'cancel' ||
-          transactionStatus == 'deny' ||
-          transactionStatus == 'expire'
-        ) {
-          const transaction = await this.paymentModel.updateOne(
-            { transaction_id: transaction_id },
-            { status: PaymentStatus.CANCELED },
-            { session },
-          );
-          await this.orderModel.updateOne(
-            { code: data.order_id },
-            { status: OrderStatus.CANCELED },
-            { session },
-          );
-          responseData = transaction;
-          console.log('level 3');
-        } else if (transactionStatus == 'pending') {
-          const transaction = await this.paymentModel.updateOne(
-            { transaction_id: transaction_id },
-            { status: PaymentStatus.PENDING },
-            { session },
-          );
-          await this.orderModel.updateOne(
-            { code: data.order_id },
-            { status: OrderStatus.NOT_PAID },
-            { session },
-          );
-          responseData = transaction;
-          console.log('level 4');
-        }
+        await this.orderModel.updateOne(
+          { code: data.order_id },
+          { status: OrderStatus.PAID },
+          { session },
+        );
+        responseData = transaction;
+      } else if (
+        transactionStatus == 'settlement' ||
+        transactionStatus == 'caputre'
+      ) {
+        const transaction = await this.paymentModel.updateOne(
+          { transaction_id: transaction_id },
+          {
+            status: PaymentStatus.PAID,
+            payment_method: data.payment_method,
+            payment_type: data.payment.type,
+          },
+          { session },
+        );
+        await this.orderModel.updateOne(
+          { code: data.order_id },
+          { status: OrderStatus.PAID },
+          { session },
+        );
+        responseData = transaction;
+      } else if (
+        transactionStatus == 'cancel' ||
+        transactionStatus == 'deny' ||
+        transactionStatus == 'expire'
+      ) {
+        const transaction = await this.paymentModel.updateOne(
+          { transaction_id: transaction_id },
+          { status: PaymentStatus.CANCELED },
+          { session },
+        );
+        await this.orderModel.updateOne(
+          { code: data.order_id },
+          { status: OrderStatus.CANCELED },
+          { session },
+        );
+        responseData = transaction;
+      } else if (transactionStatus == 'pending') {
+        const transaction = await this.paymentModel.updateOne(
+          { transaction_id: transaction_id },
+          { status: PaymentStatus.PENDING },
+          { session },
+        );
+        await this.orderModel.updateOne(
+          { code: data.order_id },
+          { status: OrderStatus.NOT_PAID },
+          { session },
+        );
+        responseData = transaction;
       }
+      // }
       await session.commitTransaction();
       session.endSession();
-      console.log('commit');
       return responseData;
     } catch (err) {
       await session.abortTransaction();
