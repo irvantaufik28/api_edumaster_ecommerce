@@ -140,16 +140,7 @@ export class PaymentService {
     const fraudStatus = data.fraud_status;
     const session = await this.connection.startSession();
     session.startTransaction();
-    console.log(data.signature_key !== hash);
-    console.log(data.signature_key !== hash);
-    console.log(data.signature_key !== hash);
-    console.log(data.signature_key !== hash);
-    console.log(data.signature_key !== hash);
     try {
-      console.log(data);
-      console.log('ini adalah status midtrans', transactionStatus);
-      console.log('ini adalah status midtrans', transactionStatus);
-      console.log('ini adalah status midtrans', transactionStatus);
       if (fraudStatus === 'accept') {
         const transaction = await this.paymentModel.updateOne(
           { transaction_id: transaction_id },
@@ -224,12 +215,7 @@ export class PaymentService {
         throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
       } else if (err instanceof HttpException) {
         throw err;
-      }
-      //  else if (err.response.data.error_messages) {
-      //   const errorMessage = err.response?.data?.error_messages.join(', ');
-      //   throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
-      // }
-      else {
+      } else {
         throw new HttpException(
           'Internal Server Error',
           HttpStatus.INTERNAL_SERVER_ERROR,
