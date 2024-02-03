@@ -156,11 +156,11 @@ export class PaymentService {
           { session },
         );
 
-        await this.orderModel.updateOne(
-          { code: data.order_id },
-          { status: OrderStatus.PAID },
-          { session },
-        );
+        // await this.orderModel.updateOne(
+        //   { code: data.order_id },
+        //   { status: OrderStatus.PAID },
+        //   { session },
+        // );
         responseData = transaction;
       } else if (
         transactionStatus == 'settlement' ||
@@ -175,11 +175,11 @@ export class PaymentService {
           },
           { session },
         );
-        await this.orderModel.updateOne(
-          { code: data.order_id },
-          { status: OrderStatus.PAID },
-          { session },
-        );
+        // await this.orderModel.updateOne(
+        //   { code: data.order_id },
+        //   { status: OrderStatus.PAID },
+        //   { session },
+        // );
         responseData = transaction;
       } else if (
         transactionStatus == 'cancel' ||
@@ -191,11 +191,11 @@ export class PaymentService {
           { status: PaymentStatus.CANCELED },
           { session },
         );
-        await this.orderModel.updateOne(
-          { code: data.order_id },
-          { status: OrderStatus.CANCELED },
-          { session },
-        );
+        // await this.orderModel.updateOne(
+        //   { code: data.order_id },
+        //   { status: OrderStatus.CANCELED },
+        //   { session },
+        // );
         responseData = transaction;
       } else if (transactionStatus == 'pending') {
         const transaction = await this.paymentModel.updateOne(
@@ -203,11 +203,11 @@ export class PaymentService {
           { status: PaymentStatus.PENDING },
           { session },
         );
-        await this.orderModel.updateOne(
-          { code: data.order_id },
-          { status: OrderStatus.NOT_PAID },
-          { session },
-        );
+        // await this.orderModel.updateOne(
+        //   { code: data.order_id },
+        //   { status: OrderStatus.NOT_PAID },
+        //   { session },
+        // );
         responseData = transaction;
       }
       // }
