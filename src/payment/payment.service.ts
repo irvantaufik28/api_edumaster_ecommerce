@@ -110,12 +110,10 @@ export class PaymentService {
         throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
       } else if (err instanceof HttpException) {
         throw err;
-      }
-      //  else if (err.response.data.error_messages) {
-      //   const errorMessage = err.response.data.error_messages.join(', ');
-      //   throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
-      // }
-      else {
+      } else if (err.response.data.error_messages) {
+        const errorMessage = err.response.data.error_messages.join(', ');
+        throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
+      } else {
         throw new HttpException(
           'Internal Server Error',
           HttpStatus.INTERNAL_SERVER_ERROR,
@@ -142,7 +140,11 @@ export class PaymentService {
     const fraudStatus = data.fraud_status;
     const session = await this.connection.startSession();
     session.startTransaction();
-
+    console.log(data.signature_key !== hash);
+    console.log(data.signature_key !== hash);
+    console.log(data.signature_key !== hash);
+    console.log(data.signature_key !== hash);
+    console.log(data.signature_key !== hash);
     try {
       console.log(data);
       console.log('ini adalah status midtrans', transactionStatus);
@@ -218,15 +220,18 @@ export class PaymentService {
       session.endSession();
       return responseData;
     } catch (err) {
+      console.log(err);
       await session.abortTransaction();
       if (err.response && err.response.status === 404) {
         throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
       } else if (err instanceof HttpException) {
         throw err;
-      } else if (err.response.data.error_messages) {
-        const errorMessage = err.response?.data?.error_messages.join(', ');
-        throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
-      } else {
+      }
+      //  else if (err.response.data.error_messages) {
+      //   const errorMessage = err.response?.data?.error_messages.join(', ');
+      //   throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
+      // }
+      else {
         throw new HttpException(
           'Internal Server Error',
           HttpStatus.INTERNAL_SERVER_ERROR,
