@@ -62,12 +62,6 @@ export class Order {
     default: OrderStatus.PENDING,
   })
   status: OrderStatus;
-
-  @Prop({ default: null })
-  snap_token: string;
-
-  @Prop({ default: null })
-  snap_redirect_url: string;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

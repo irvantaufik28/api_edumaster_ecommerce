@@ -13,8 +13,12 @@ import {
   PaymentStatus,
 } from './schemas/payment.schema';
 import axios from 'axios';
-import { PaymentResponse } from './interface/payement.interface';
+import {
+  PaymentPaginationResult,
+  PaymentResponse,
+} from './interface/payement.interface';
 import * as crypto from 'crypto';
+import { Query } from 'express-serve-static-core';
 
 @Injectable()
 export class PaymentService {
@@ -201,6 +205,9 @@ export class PaymentService {
           responseData = transaction;
         }
       }
+      await session.commitTransaction();
+      session.endSession();
+      return responseData;
     } catch (err) {
       await session.abortTransaction();
       if (err.response && err.response.status === 404) {
@@ -219,8 +226,6 @@ export class PaymentService {
     } finally {
       session.endSession();
     }
-
-    return responseData;
   }
 
   async paymentNotif(paymentData: any): Promise<any> {
@@ -228,7 +233,7 @@ export class PaymentService {
       transaction_id: paymentData.transaction_id,
     });
 
-    if (payment) {
+    if (!payment) {
       throw new HttpException('payment not found', HttpStatus.NOT_FOUND);
     }
 
@@ -238,5 +243,80 @@ export class PaymentService {
     );
 
     return new HttpException('success', HttpStatus.OK);
+  }
+
+  async getById(id: string): Promise<PaymentResponse> {
+    const payment = await this.paymentModel
+      .findOne({ _id: id })
+      .populate({
+        path: 'order',
+        populate: {
+          path: 'order_products',
+          model: 'OrderProduct',
+        },
+      })
+      .exec();
+
+    if (!payment) {
+      throw new HttpException('payment not found', HttpStatus.NOT_FOUND);
+    }
+
+    return { data: payment };
+  }
+
+  async findAll(query: Query): Promise<PaymentPaginationResult> {
+    const page = Number(query.page) || 1;
+    const size = Number(query.size) || 10;
+    const skip = size * (page - 1);
+
+    const keyword = query.keyword
+      ? {
+          name: {
+            $regex: new RegExp(String(query.keyword), 'i'),
+          },
+        }
+      : {};
+
+    const customer_nis = query.nis
+      ? {
+          nis: {
+            $regex: new RegExp(String(query.nis), 'i'),
+          },
+        }
+      : {};
+
+    const status = query.status
+      ? {
+          status: {
+            $regex: new RegExp(String(query.status)),
+          },
+        }
+      : {};
+
+    const totalItems = await this.paymentModel.find({
+      ...keyword,
+      ...status,
+      ...customer_nis,
+    });
+
+    const payments = await this.paymentModel
+      .find({ ...keyword, ...status, ...customer_nis })
+      .limit(size)
+      .skip(skip)
+      .populate({
+        path: 'order',
+      })
+      .exec();
+
+    const result = {
+      data: payments,
+      paging: {
+        page: page,
+        total_item: totalItems.length,
+        total_page: Math.ceil(totalItems.length / size),
+      },
+    };
+
+    return result;
   }
 }
