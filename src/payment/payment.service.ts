@@ -230,7 +230,7 @@ export class PaymentService {
 
   async paymentNotif(paymentData: any): Promise<any> {
     const payment = await this.paymentModel.findOne({
-      transaction_id: paymentData.transaction_id,
+      transaction_id: paymentData.order_id,
     });
 
     if (!payment) {
@@ -238,7 +238,7 @@ export class PaymentService {
     }
 
     await this.updateStatusBasedOnMidtransResponse(
-      paymentData.transaction_id,
+      paymentData.order_id,
       paymentData,
     );
 
