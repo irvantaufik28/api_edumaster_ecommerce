@@ -141,6 +141,7 @@ export class PaymentService {
     session.startTransaction();
 
     try {
+      console.log(transactionStatus);
       if (transactionStatus === 'caputre') {
         if (fraudStatus === 'accept') {
           const transaction = await this.paymentModel.updateOne(
