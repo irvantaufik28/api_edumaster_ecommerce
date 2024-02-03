@@ -104,15 +104,18 @@ export class PaymentService {
 
       return { data: result };
     } catch (err) {
+      console.log(err);
       await session.abortTransaction();
       if (err.response && err.response.status === 404) {
         throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
       } else if (err instanceof HttpException) {
         throw err;
-      } else if (err.response.data.error_messages) {
-        const errorMessage = err.response.data.error_messages.join(', ');
-        throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
-      } else {
+      }
+      //  else if (err.response.data.error_messages) {
+      //   const errorMessage = err.response.data.error_messages.join(', ');
+      //   throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
+      // }
+      else {
         throw new HttpException(
           'Internal Server Error',
           HttpStatus.INTERNAL_SERVER_ERROR,
