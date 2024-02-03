@@ -158,6 +158,7 @@ export class PaymentService {
             { status: OrderStatus.PAID },
             { session },
           );
+          console.log('level 1');
           responseData = transaction;
         } else if (transactionStatus == 'settlement') {
           const transaction = await this.paymentModel.updateOne(
@@ -175,6 +176,7 @@ export class PaymentService {
             { session },
           );
           responseData = transaction;
+          console.log('level 2');
         } else if (
           transactionStatus == 'cancel' ||
           transactionStatus == 'deny' ||
@@ -191,6 +193,7 @@ export class PaymentService {
             { session },
           );
           responseData = transaction;
+          console.log('level 3');
         } else if (transactionStatus == 'pending') {
           const transaction = await this.paymentModel.updateOne(
             { transaction_id: transaction_id },
@@ -203,10 +206,12 @@ export class PaymentService {
             { session },
           );
           responseData = transaction;
+          console.log('level 4');
         }
       }
       await session.commitTransaction();
       session.endSession();
+      console.log('commit');
       return responseData;
     } catch (err) {
       await session.abortTransaction();
