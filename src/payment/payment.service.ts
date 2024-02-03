@@ -221,7 +221,7 @@ export class PaymentService {
       } else if (err instanceof HttpException) {
         throw err;
       } else if (err.response.data.error_messages) {
-        const errorMessage = err.response.data.error_messages.join(', ');
+        const errorMessage = err.response?.data?.error_messages.join(', ');
         throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
       } else {
         throw new HttpException(
